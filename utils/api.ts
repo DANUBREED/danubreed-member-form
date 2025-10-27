@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const API_BASE_URL = "https://daniels-camp-backend.onrender.com/api/v1"
+const API_BASE_URL = "https://daniels-camp-backend.onrender.com"
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
