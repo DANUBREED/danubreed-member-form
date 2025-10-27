@@ -162,9 +162,10 @@ export function RegistrationForm() {
             className="w-full h-12 px-4 border border-gray-200 rounded-2xl bg-white text-gray-800 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
           >
             <option value="">Select school status</option>
-            <option value="highschool">High School</option>
+            <option value="secondaryschool">Secondary School</option>
             <option value="undergraduate">Undergraduate</option>
             <option value="postgraduate">Postgraduate</option>
+            <option value="trainee">Trainee</option>
           </select>
           {errors.schoolStatus && <p className="text-sm text-red-500 flex items-center gap-1">
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
