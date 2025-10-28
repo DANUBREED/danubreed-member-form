@@ -30,6 +30,7 @@ const SERVING_UNITS = [
   "Integrative",
   "Maintenance",
   "Beauty and Aesthetics",
+  "none"
 ]
 
 export function RegistrationForm() {
@@ -137,7 +138,7 @@ export function RegistrationForm() {
 
         {/* Parents Number */}
         <div className="space-y-3">
-          <Label htmlFor="parentsNumber" className="text-sm font-semibold text-gray-700">Parent's Number *</Label>
+          <Label htmlFor="parentsNumber" className="text-sm font-semibold text-gray-700">Parent's/Guardian's Number*</Label>
           <Input
             id="parentsNumber"
             type="tel"
