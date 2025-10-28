@@ -26,6 +26,7 @@ export const registerUser = async (data: {
   parentsNumber: string
   schoolStatus: string
   servingUnit: string
+  tribe: string
   membershipStatus: boolean
 }) => {
   return apiClient.post("/register", data)
@@ -45,4 +46,16 @@ export const getUsersByUnit = async (unit: string) => {
 
 export const updateMembership = async (userId: string, membershipStatus: boolean) => {
   return apiClient.patch(`/admin/users/${userId}/membership`, { membershipStatus })
+}
+
+export const updateSchoolStatus = async (userId: string, schoolStatus: string) => {
+  return apiClient.patch(`/admin/users/${userId}/school-status`, { schoolStatus })
+}
+
+export const updateContact = async (userId: string, data: { phone?: string; parentsNumber?: string }) => {
+  return apiClient.patch(`/admin/users/${userId}/contact`, data)
+}
+
+export const updateTribe = async (userId: string, tribe: string) => {
+  return apiClient.patch(`/admin/users/${userId}/tribe`, { tribe })
 }

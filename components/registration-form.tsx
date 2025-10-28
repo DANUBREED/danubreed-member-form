@@ -1,7 +1,5 @@
 "use client"
 
-"use client"
-
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
@@ -18,6 +16,7 @@ interface RegistrationFormData {
   parentsNumber: string
   schoolStatus: string
   servingUnit: string
+  tribe: string
   membershipStatus: boolean
 }
 
@@ -31,6 +30,14 @@ const SERVING_UNITS = [
   "Maintenance",
   "Beauty and Aesthetics",
   "none"
+]
+
+const TRIBES = [
+  "Diamond",
+  "Ruby",
+  "Emerald",
+  "Amber",
+  "None"
 ]
 
 export function RegistrationForm() {
@@ -176,6 +183,29 @@ export function RegistrationForm() {
           </p>}
         </div>
 
+        {/* Tribe */}
+        <div className="space-y-3">
+          <Label htmlFor="tribe" className="text-sm font-semibold text-gray-700">Tribe *</Label>
+          <select
+            id="tribe"
+            {...register("tribe", { required: "Tribe is required" })}
+            className="w-full h-12 px-4 border border-gray-200 rounded-2xl bg-white text-gray-800 focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+          >
+            <option value="">Select tribe</option>
+            {TRIBES.map((tribe) => (
+              <option key={tribe} value={tribe}>
+                {tribe}
+              </option>
+            ))}
+          </select>
+          {errors.tribe && <p className="text-sm text-red-500 flex items-center gap-1">
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+            </svg>
+            {errors.tribe.message}
+          </p>}
+        </div>
+
         {/* Serving Unit */}
         <div className="space-y-3 md:col-span-2">
           <Label htmlFor="servingUnit" className="text-sm font-semibold text-gray-700">Serving Unit *</Label>
@@ -202,14 +232,14 @@ export function RegistrationForm() {
         {/* Membership Status */}
         <div className="space-y-3 md:col-span-2">
           <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-2xl border border-gray-200">
-            <input 
-              id="membershipStatus" 
-              type="checkbox" 
-              {...register("membershipStatus")} 
-              className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" 
+            <input
+              id="membershipStatus"
+              type="checkbox"
+              {...register("membershipStatus")}
+              className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
             />
             <Label htmlFor="membershipStatus" className="text-sm font-medium text-gray-700 mb-0">
-              I want to be a member of Danubreed
+              i have completed my membership class
             </Label>
           </div>
         </div>

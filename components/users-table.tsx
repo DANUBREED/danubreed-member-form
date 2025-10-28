@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import toast from "react-hot-toast"
-import { getUsers, getUsersByUnit, updateMembership } from "@/utils/api"
+import { getUsers, getUsersByUnit, updateMembership, updateSchoolStatus, updateContact, updateTribe } from "@/utils/api"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
@@ -15,6 +15,7 @@ interface User {
   parentsNumber: string
   schoolStatus: string
   servingUnit: string
+  tribe: string
   membershipStatus: boolean
   submittedAt?: string
   createdAt?: string
@@ -29,6 +30,14 @@ const SERVING_UNITS = [
   "Integrative",
   "Maintenance",
   "Beauty and Aesthetics",
+]
+
+const TRIBES = [
+  "Diamond",
+  "Ruby",
+  "Emerald",
+  "Amber",
+  "None"
 ]
 
 const ITEMS_PER_PAGE = 100
@@ -88,7 +97,7 @@ export function UsersTable() {
   useEffect(() => {
     let filtered = allUsers
     if (searchTerm) {
-      filtered = allUsers.filter(user => 
+      filtered = allUsers.filter(user =>
         user.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.surname.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.phone.includes(searchTerm)
@@ -105,7 +114,7 @@ export function UsersTable() {
   const handleToggleMembership = async (userId: string, currentStatus: boolean) => {
     try {
       await updateMembership(userId, !currentStatus)
-      const updatedUsers = allUsers.map(user => 
+      const updatedUsers = allUsers.map(user =>
         user._id === userId ? { ...user, membershipStatus: !currentStatus } : user
       )
       setAllUsers(updatedUsers)
@@ -126,15 +135,31 @@ export function UsersTable() {
   }
 
   const saveEdit = async () => {
-    // Note: This would require a backend API endpoint to update user info
-    // For now, just update locally
-    const updatedUsers = allUsers.map(user => 
-      user._id === editingUser ? { ...user, ...editForm } : user
-    )
-    setAllUsers(updatedUsers)
-    setEditingUser(null)
-    setEditForm({})
-    toast.success("User updated (local only - backend update needed)")
+    try {
+      // Update school status and contact info via API
+      if (editForm.schoolStatus !== undefined) {
+        await updateSchoolStatus(editingUser!, editForm.schoolStatus)
+      }
+      if (editForm.phone !== undefined || editForm.parentsNumber !== undefined) {
+        await updateContact(editingUser!, {
+          phone: editForm.phone,
+          parentsNumber: editForm.parentsNumber
+        })
+      }
+      if (editForm.tribe !== undefined) {
+        await updateTribe(editingUser!, editForm.tribe)
+      }
+      // Update locally for immediate UI feedback
+      const updatedUsers = allUsers.map(user =>
+        user._id === editingUser ? { ...user, ...editForm } : user
+      )
+      setAllUsers(updatedUsers)
+      setEditingUser(null)
+      setEditForm({})
+      toast.success("User updated successfully")
+    } catch (error) {
+      toast.error("Failed to update user")
+    }
   }
 
   if (isLoading) {
@@ -195,6 +220,7 @@ export function UsersTable() {
                 <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Name</th>
                 <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Contact</th>
                 <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Details</th>
+                <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Tribe</th>
                 <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Serving Unit</th>
                 <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Membership</th>
                 <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Submitted</th>
@@ -204,7 +230,7 @@ export function UsersTable() {
             <tbody>
               {paginatedUsers.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={8} className="px-6 py-12 text-center text-gray-500">
                     <div className="flex flex-col items-center space-y-2">
                       <svg className="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -278,6 +304,21 @@ export function UsersTable() {
                         <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 capitalize">
                           {user.schoolStatus}
                         </span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4">
+                      {editingUser === user._id ? (
+                        <select
+                          value={editForm.tribe || ''}
+                          onChange={(e) => setEditForm({...editForm, tribe: e.target.value})}
+                          className="w-full text-sm border border-gray-200 rounded-lg px-2 py-1"
+                        >
+                          {TRIBES.map(tribe => (
+                            <option key={tribe} value={tribe}>{tribe}</option>
+                          ))}
+                        </select>
+                      ) : (
+                        <span className="text-sm font-medium text-gray-900">{user.tribe}</span>
                       )}
                     </td>
                     <td className="px-6 py-4">
@@ -369,8 +410,8 @@ export function UsersTable() {
                     onClick={() => setCurrentPage(page)}
                     variant={currentPage === page ? "default" : "outline"}
                     className={`px-3 py-2 text-sm rounded-lg ${
-                      currentPage === page 
-                        ? "bg-blue-600 text-white" 
+                      currentPage === page
+                        ? "bg-blue-600 text-white"
                         : "hover:bg-blue-50"
                     }`}
                   >
