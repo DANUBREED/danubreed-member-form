@@ -12,7 +12,7 @@ interface RegistrationFormData {
   firstName: string
   surname: string
   phone: string
-  dob: string
+  dateOfBirth: string
   gender: string
   parentsNumber: string
   schoolStatus: string
@@ -166,16 +166,16 @@ export function RegistrationForm() {
 
         {/* Date of Birth */}
         <div className="space-y-3">
-          <Label htmlFor="dob" className="text-sm font-semibold text-gray-700">
+          <Label htmlFor="dateOfBirth" className="text-sm font-semibold text-gray-700">
             Date of Birth *
           </Label>
           <Input
-            id="dob"
+            id="dateOfBirth"
             type="date"
-            {...register("dob", { required: "Date of birth is required" })}
+            {...register("dateOfBirth", { required: "Date of birth is required" })}
             className="rounded-2xl border-gray-200 focus:border-blue-500 focus:ring-blue-500 h-12 px-4 text-gray-800"
           />
-          {errors.dob && (
+          {errors.dateOfBirth && (
             <p className="text-sm text-red-500 flex items-center gap-1">
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                 <path
@@ -194,7 +194,7 @@ export function RegistrationForm() {
                   clipRule="evenodd"
                 />
               </svg>
-              {errors.dob.message}
+              {errors.dateOfBirth.message}
             </p>
           )}
         </div>
