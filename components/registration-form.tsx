@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useForm } from "react-hook-form"
+import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
 import { registerUser } from "@/utils/api"
 import { Button } from "@/components/ui/button"
@@ -48,13 +49,14 @@ export function RegistrationForm() {
   })
 
   const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter()
 
   const onSubmit = async (data: RegistrationFormData) => {
     setIsLoading(true)
     try {
       await registerUser(data)
       toast.success("User registered successfully")
-      reset()
+      router.push('/confirm')
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Registration failed"
       toast.error(errorMessage)
